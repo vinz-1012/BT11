@@ -1,0 +1,17 @@
+<sitemesh>
+    <decorator-prefix>/WEB-INF/decorators/</decorator-prefix>
+
+    <mapping path="/admin/*" decorator="admin.jsp"/>
+    <mapping path="/admin" decorator="admin.jsp"/>
+
+    <mapping path="/*" decorator="web.jsp"/>
+
+    <mapping path="/" exclude="true"/>
+    <mapping path="/index.jsp" exclude="true"/>
+    <mapping path="/views/*" exclude="true"/>
+    <mapping path="/WEB-INF/*" exclude="true"/>
+    <mapping path="/assets/*" exclude="true"/>
+    <mapping path="/static/*" exclude="true"/>
+    <mapping path="/uploads/*" exclude="true"/>
+    <mapping path="/image*" exclude="true"/>
+</sitemesh>
