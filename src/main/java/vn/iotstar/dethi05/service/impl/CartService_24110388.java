@@ -38,6 +38,11 @@ public class CartService_24110388 implements ICartService_24110388 {
     }
 
     @Override
+    public List<Cart_24110388> findByUserIdAndStatus(int userId, int status) {
+        return cartDao.findByUserIdAndStatus(userId, status);
+    }
+
+    @Override
     public List<CartItem_24110388> findItemsByCartId(String cartId) {
         return cartDao.findItemsByCartId(cartId);
     }

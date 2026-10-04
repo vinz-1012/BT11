@@ -120,6 +120,27 @@ public class CartDao_24110388 implements ICartDao_24110388 {
     }
 
     @Override
+    public List<Cart_24110388> findByUserIdAndStatus(int userId, int status) {
+        EntityManager em = JpaConfig_24110388.getEntityManager();
+        try {
+            String jpql;
+            if (status == 1) {
+                jpql = "SELECT DISTINCT c FROM Cart_24110388 c LEFT JOIN FETCH c.cartItems ci LEFT JOIN FETCH ci.product p WHERE c.user.userId = :userId AND (c.status = 1 OR c.status = 0 OR c.status IS NULL) ORDER BY c.buyDate DESC";
+            } else {
+                jpql = "SELECT DISTINCT c FROM Cart_24110388 c LEFT JOIN FETCH c.cartItems ci LEFT JOIN FETCH ci.product p WHERE c.user.userId = :userId AND c.status = :status ORDER BY c.buyDate DESC";
+            }
+            TypedQuery<Cart_24110388> query = em.createQuery(jpql, Cart_24110388.class);
+            query.setParameter("userId", userId);
+            if (status != 1) {
+                query.setParameter("status", status);
+            }
+            return query.getResultList();
+        } finally {
+            em.close();
+        }
+    }
+
+    @Override
     public List<CartItem_24110388> findItemsByCartId(String cartId) {
         EntityManager em = JpaConfig_24110388.getEntityManager();
         try {

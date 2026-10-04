@@ -11,5 +11,6 @@ public interface ICartService_24110388 {
     void saveOrder(Cart_24110388 cart, List<CartItem_24110388> items);
     Cart_24110388 findById(String cartId);
     List<Cart_24110388> findByUserId(int userId);
+    List<Cart_24110388> findByUserIdAndStatus(int userId, int status);
     List<CartItem_24110388> findItemsByCartId(String cartId);
 }

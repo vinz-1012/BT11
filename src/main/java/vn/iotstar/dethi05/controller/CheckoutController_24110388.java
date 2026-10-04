@@ -50,15 +50,17 @@ public class CheckoutController_24110388 extends HttpServlet {
                 return;
             }
 
+            Cart_24110388 dbCart = cartService.findById(orderId);
+            if (dbCart == null) {
+                resp.sendRedirect(req.getContextPath() + "/home");
+                return;
+            }
+
             OrderReceipt_24110388 lastOrder = (OrderReceipt_24110388) session.getAttribute("lastOrder");
             if (lastOrder != null && orderId.equals(lastOrder.getOrderId())) {
+                lastOrder.setStatus(dbCart.getStatus());
                 req.setAttribute("receipt", lastOrder);
             } else {
-                Cart_24110388 cart = cartService.findById(orderId);
-                if (cart == null) {
-                    resp.sendRedirect(req.getContextPath() + "/home");
-                    return;
-                }
                 List<CartItem_24110388> dbItems = cartService.findItemsByCartId(orderId);
                 List<CartItemModel_24110388> itemModels = new ArrayList<>();
                 double total = 0.0;
@@ -70,17 +72,18 @@ public class CheckoutController_24110388 extends HttpServlet {
                 }
 
                 OrderReceipt_24110388 receipt = new OrderReceipt_24110388(
-                        cart.getCartId(),
-                        cart.getBuyDate(),
-                        cart.getUser() != null ? (cart.getUser().getFullname() != null ? cart.getUser().getFullname() : cart.getUser().getUsername()) : "Khách hàng",
-                        cart.getUser() != null ? cart.getUser().getPhone() : "",
-                        cart.getUser() != null ? cart.getUser().getEmail() : "",
+                        dbCart.getCartId(),
+                        dbCart.getBuyDate(),
+                        dbCart.getUser() != null ? (dbCart.getUser().getFullname() != null ? dbCart.getUser().getFullname() : dbCart.getUser().getUsername()) : "Khách hàng",
+                        dbCart.getUser() != null ? dbCart.getUser().getPhone() : "",
+                        dbCart.getUser() != null ? dbCart.getUser().getEmail() : "",
                         "Giao hàng tận nơi (COD)",
                         "",
                         "Thanh toán khi nhận hàng (COD)",
                         itemModels,
                         total
                 );
+                receipt.setStatus(dbCart.getStatus());
                 req.setAttribute("receipt", receipt);
             }
 
@@ -91,8 +94,36 @@ public class CheckoutController_24110388 extends HttpServlet {
                 resp.sendRedirect(req.getContextPath() + "/login");
                 return;
             }
-            List<Cart_24110388> myOrders = cartService.findByUserId(user.getUserId());
+
+            String statusParam = req.getParameter("status");
+            Integer statusFilter = null;
+            if (statusParam != null && !statusParam.trim().isEmpty() && !"all".equalsIgnoreCase(statusParam.trim())) {
+                try {
+                    statusFilter = Integer.parseInt(statusParam.trim());
+                } catch (NumberFormatException e) {
+                    statusFilter = null;
+                }
+            }
+
+            List<Cart_24110388> myOrders;
+            if (statusFilter != null && statusFilter > 0) {
+                myOrders = cartService.findByUserIdAndStatus(user.getUserId(), statusFilter);
+            } else {
+                myOrders = cartService.findByUserId(user.getUserId());
+            }
+
+            List<Cart_24110388> allOrders = cartService.findByUserId(user.getUserId());
+            Map<Integer, Integer> statusCounts = new HashMap<>();
+            for (Cart_24110388 c : allOrders) {
+                int st = c.getStatus() != null ? c.getStatus() : 1;
+                if (st == 0) st = 1;
+                statusCounts.put(st, statusCounts.getOrDefault(st, 0) + 1);
+            }
+
             req.setAttribute("orders", myOrders);
+            req.setAttribute("selectedStatus", statusFilter != null ? statusFilter : 0);
+            req.setAttribute("totalOrdersCount", allOrders.size());
+            req.setAttribute("statusCounts", statusCounts);
             req.getRequestDispatcher("/views/web/my-orders.jsp").forward(req, resp);
         }
     }

@@ -87,8 +87,8 @@
                     </div>
                     <div class="col-md-6">
                         <div class="text-muted small">Trạng thái đơn hàng:</div>
-                        <div class="badge bg-info-subtle text-info-emphasis">
-                            <i class="fa-solid fa-clock-rotate-left me-1"></i>Đang chuẩn bị hàng COD
+                        <div class="${receipt.statusBadgeClass} px-3 py-1 fs-6">
+                            <i class="fa-solid fa-clock-rotate-left me-1"></i>${receipt.statusName}
                         </div>
                     </div>
                 </div>

@@ -17,6 +17,7 @@ public class OrderReceipt_24110388 implements Serializable {
     private String paymentMethod;
     private List<CartItemModel_24110388> items;
     private double totalAmount;
+    private Integer status = 1;
 
     public OrderReceipt_24110388() {
     }
@@ -114,5 +115,43 @@ public class OrderReceipt_24110388 implements Serializable {
 
     public void setTotalAmount(double totalAmount) {
         this.totalAmount = totalAmount;
+    }
+
+    public Integer getStatus() {
+        return status;
+    }
+
+    public void setStatus(Integer status) {
+        this.status = status;
+    }
+
+    public String getStatusName() {
+        if (status == null) return "Đơn hàng mới";
+        return switch (status) {
+            case 1, 0 -> "Đơn hàng mới";
+            case 2 -> "Đã xác nhận";
+            case 3 -> "Chuẩn bị hàng";
+            case 4 -> "Vận chuyển";
+            case 5 -> "Giao hàng";
+            case 6 -> "Đã giao";
+            case 7 -> "Đơn hàng hủy";
+            case 8 -> "Đơn hàng hoàn";
+            default -> "Đơn hàng mới";
+        };
+    }
+
+    public String getStatusBadgeClass() {
+        if (status == null) return "badge bg-primary-subtle text-primary border border-primary-subtle";
+        return switch (status) {
+            case 1, 0 -> "badge bg-primary-subtle text-primary border border-primary-subtle";
+            case 2 -> "badge bg-info-subtle text-info-emphasis border border-info-subtle";
+            case 3 -> "badge bg-warning-subtle text-warning-emphasis border border-warning-subtle";
+            case 4 -> "badge bg-secondary-subtle text-secondary-emphasis border border-secondary-subtle";
+            case 5 -> "badge bg-primary text-white";
+            case 6 -> "badge bg-success-subtle text-success border border-success-subtle";
+            case 7 -> "badge bg-danger-subtle text-danger border border-danger-subtle";
+            case 8 -> "badge bg-dark-subtle text-dark border border-dark-subtle";
+            default -> "badge bg-secondary-subtle text-secondary";
+        };
     }
 }
